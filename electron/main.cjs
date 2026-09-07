@@ -24,7 +24,6 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
-ようこそ: undefined,
     },
   });
 
