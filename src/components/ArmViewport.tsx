@@ -124,7 +124,7 @@ export function ArmViewport(props: Props) {
       let firstOffsetY = arm.baseHeight;
       for (let i = 0; i < arm.links.length; i++) {
         const pivot = new THREE.Group();
-        pivot.position.set(i === 0 ? 0 : arm.links[i - 1], i === 0 ? firstOffsetY : 0, 0);
+        pivot.position.set(i === 0 ? 0 : arm.links[i - 1]!, i === 0 ? firstOffsetY : 0, 0);
         parent.add(pivot);
         api.current.pivots.push(pivot);
 
@@ -138,7 +138,7 @@ export function ArmViewport(props: Props) {
         collar.castShadow = true;
         pivot.add(collar);
 
-        const L = arm.links[i];
+        const L = arm.links[i]!;
         const seg = new THREE.Mesh(
           new THREE.CylinderGeometry(Math.max(rTop, 0.055), Math.max(rBot, 0.07), L, 24, 1),
           i % 2 === 0 ? matLink : matLinkDark,
@@ -245,13 +245,13 @@ export function ArmViewport(props: Props) {
         api.current.tip.getWorldPosition(worldTip);
         const pts = api.current.trailPts;
         if (p.showTrail) {
-          if (!pts.length || pts[pts.length - 1].distanceTo(worldTip) > 0.02) {
+          if (!pts.length || pts[pts.length - 1]!.distanceTo(worldTip) > 0.02) {
             pts.push(worldTip.clone());
             if (pts.length > 600) pts.shift();
           }
         } else if (pts.length) pts.length = 0;
         const attr = trailGeo.getAttribute("position") as THREE.BufferAttribute;
-        for (let i = 0; i < pts.length; i++) attr.setXYZ(i, pts[i].x, pts[i].y, pts[i].z);
+        for (let i = 0; i < pts.length; i++) attr.setXYZ(i, pts[i]!.x, pts[i]!.y, pts[i]!.z);
         attr.needsUpdate = true;
         trailGeo.setDrawRange(0, pts.length);
         trail.visible = p.showTrail && pts.length > 1;
