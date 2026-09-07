@@ -134,6 +134,7 @@ if (!app.requestSingleInstanceLock()) {
   });
 
   app.whenReady().then(() => {
+    registerStaticProtocol();
     buildMenu();
     createWindow();
 
