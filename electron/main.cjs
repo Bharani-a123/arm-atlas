@@ -55,8 +55,8 @@ function createWindow() {
     // Live cloud mode: loads the hosted app (requires an internet connection).
     mainWindow.loadURL(REMOTE_URL);
   } else {
-    // Offline mode (default): load the bundled static build.
-    mainWindow.loadFile(path.join(__dirname, "..", "desktop-dist", "index.html"));
+    // Offline mode (default): load the bundled static build from disk.
+    mainWindow.loadURL(`${APP_ORIGIN}/index.html`);
   }
 
   // Open any external link in the user's real browser, never in the app window.
