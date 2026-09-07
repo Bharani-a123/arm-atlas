@@ -1,11 +1,33 @@
 // Electron main process — Arm Atlas desktop wrapper.
 // CommonJS (.cjs) because package.json sets "type": "module".
-const { app, BrowserWindow, Menu, dialog, shell } = require("electron");
+const { app, BrowserWindow, Menu, dialog, shell, protocol, net } = require("electron");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
 
 // Set to a hosted URL string to run the cloud build instead of the bundled files.
 // Example: const REMOTE_URL = "https://arm-atlas.lovable.app";
 const REMOTE_URL = null;
+
+// The static build is served over a custom "app://" scheme instead of raw
+// file:// — ES modules are blocked by CORS under file://, which would leave a
+// blank window. This keeps the app fully offline (files still come from disk).
+const APP_ORIGIN = "app://bundle";
+const STATIC_DIR = path.join(__dirname, "..", "desktop-dist");
+
+protocol.registerSchemesAsPrivileged([
+  { scheme: "app", privileges: { standard: true, secure: true, supportFetchAPI: true } },
+]);
+
+function registerStaticProtocol() {
+  protocol.handle("app", (request) => {
+    const url = new URL(request.url);
+    const relative = decodeURIComponent(url.pathname).replace(/^\/+/, "") || "index.html";
+    const resolved = path.join(STATIC_DIR, relative);
+    // Prevent path traversal outside the bundled static directory.
+    const safe = resolved.startsWith(STATIC_DIR) ? resolved : path.join(STATIC_DIR, "index.html");
+    return net.fetch(pathToFileURL(safe).toString());
+  });
+}
 
 let mainWindow = null;
 
