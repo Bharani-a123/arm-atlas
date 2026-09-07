@@ -1,0 +1,38 @@
+appId: dev.armatlas.desktop
+productName: Arm Atlas
+copyright: Copyright © 2026 Bharani Dharan
+directories:
+  output: dist-desktop
+  buildResources: build
+files:
+  - electron/**/*
+  - desktop-dist/**/*
+  - package.json
+asar: true
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  icon: build/icon.ico
+  artifactName: ArmAtlas-${version}-${arch}-${ext}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Arm Atlas
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+  category: public.app-category.developer-tools
+  icon: build/icon.icns
+dmg:
+  title: Arm Atlas ${version}
+linux:
+  target: [AppImage]
+  category: Development
+  icon: build/icon.png
