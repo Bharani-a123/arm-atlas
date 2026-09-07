@@ -153,7 +153,7 @@ export function ArmViewport(props: Props) {
 
       // end effector / claw
       const tip = new THREE.Group();
-      tip.position.set(arm.links[arm.links.length - 1], 0, 0);
+      tip.position.set(arm.links[arm.links.length - 1] ?? 0, 0, 0);
       parent.add(tip);
       api.current.tip = tip;
 
