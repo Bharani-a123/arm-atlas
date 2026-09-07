@@ -51,7 +51,7 @@ export type FKResult = {
 
 /** Forward kinematics: base yaw + planar pitch chain. */
 export function forwardKinematics(arm: ArmConfig): FKResult {
-  const yawDeg = arm.joints[0].angle;
+  const yawDeg = arm.joints[0]!.angle;
   let acc = 0;
   let r = 0;
   let y = arm.baseHeight;
