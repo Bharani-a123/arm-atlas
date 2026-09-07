@@ -22,7 +22,7 @@ const LINK_DEFAULTS: Record<number, number[]> = {
 };
 
 export function createArm(dof: number): ArmConfig {
-  const links = [...(LINK_DEFAULTS[dof] ?? LINK_DEFAULTS[4])];
+  const links = [...(LINK_DEFAULTS[dof] ?? LINK_DEFAULTS[4]!)];
   const joints: Joint[] = [
     { name: "θ1 Base", angle: 0, min: -180, max: 180, axis: "yaw" },
   ];
@@ -56,9 +56,9 @@ export function forwardKinematics(arm: ArmConfig): FKResult {
   let r = 0;
   let y = arm.baseHeight;
   for (let i = 0; i < arm.links.length; i++) {
-    acc += arm.joints[i + 1].angle;
-    r += arm.links[i] * Math.cos(acc * DEG);
-    y += arm.links[i] * Math.sin(acc * DEG);
+    acc += arm.joints[i + 1]!.angle;
+    r += arm.links[i]! * Math.cos(acc * DEG);
+    y += arm.links[i]! * Math.sin(acc * DEG);
   }
   const yaw = yawDeg * DEG;
   return {
@@ -95,7 +95,7 @@ export function solveIK(
 ): { angles: number[]; error: number; iterations: number } {
   const angles = arm.joints.map((j) => j.angle);
   const yawDeg = Math.atan2(-target.z, target.x) / DEG;
-  angles[0] = clamp(yawDeg, arm.joints[0].min, arm.joints[0].max);
+  angles[0] = clamp(yawDeg, arm.joints[0]!.min, arm.joints[0]!.max);
 
   const tr = Math.hypot(target.x, target.z);
   const ty = target.y;
@@ -107,9 +107,9 @@ export function solveIK(
     let r = 0;
     let y = arm.baseHeight;
     for (let i = 0; i < n; i++) {
-      acc += angles[i + 1];
-      r += arm.links[i] * Math.cos(acc * DEG);
-      y += arm.links[i] * Math.sin(acc * DEG);
+      acc += angles[i + 1]!;
+      r += arm.links[i]! * Math.cos(acc * DEG);
+      y += arm.links[i]! * Math.sin(acc * DEG);
       pts.push([r, y]);
     }
     return pts;
@@ -121,18 +121,18 @@ export function solveIK(
     iterations = it + 1;
     for (let i = n - 1; i >= 0; i--) {
       const pts = points();
-      const [jr, jy] = pts[i];
-      const [er, ey] = pts[n];
+      const [jr, jy] = pts[i]!;
+      const [er, ey] = pts[n]!;
       const a = Math.atan2(ey - jy, er - jr);
       const b = Math.atan2(ty - jy, tr - jr);
       let delta = (b - a) / DEG;
       while (delta > 180) delta -= 360;
       while (delta < -180) delta += 360;
-      const j = arm.joints[i + 1];
-      angles[i + 1] = clamp(angles[i + 1] + delta, j.min, j.max);
+      const j = arm.joints[i + 1]!;
+      angles[i + 1] = clamp(angles[i + 1]! + delta, j.min, j.max);
     }
     const pts = points();
-    error = Math.hypot(pts[n][0] - tr, pts[n][1] - ty);
+    error = Math.hypot(pts[n]![0] - tr, pts[n]![1] - ty);
     if (error < threshold) break;
   }
   return { angles, error, iterations };
@@ -150,7 +150,7 @@ export const PRESETS: PresetName[] = [
 export function presetAngles(arm: ArmConfig, name: PresetName): number[] {
   const n = arm.joints.length;
   const out = new Array(n).fill(0);
-  const clampJ = (i: number, v: number) => clamp(v, arm.joints[i].min, arm.joints[i].max);
+  const clampJ = (i: number, v: number) => clamp(v, arm.joints[i]!.min, arm.joints[i]!.max);
   switch (name) {
     case "Zero Position":
       return out.map((_, i) => clampJ(i, 0));
