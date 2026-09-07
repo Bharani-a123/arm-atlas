@@ -37,7 +37,7 @@ export const Route = createFileRoute("/")({
 
 const f = (n: number) => (Math.round(n * 1000) / 1000).toFixed(3);
 
-function Dashboard() {
+export function Dashboard() {
   const [arm, setArm] = useState<ArmConfig>(() => createArm(4));
   const [angles, setAngles] = useState<number[]>(() => createArm(4).joints.map((j) => j.angle));
   const [mode, setMode] = useState<"fk" | "ik">("fk");
